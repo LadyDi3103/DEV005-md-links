@@ -1,18 +1,20 @@
 const fs = require('fs');
 const path = require('path');
-const axios = require('axios'); // librería npm para hacer solicitudes http
-const MarkdownIt = require('markdown-it'),
-	md = new MarkdownIt();
+const axios = require('axios'); // librería para hacer solicitudes http
+const marked = require('marked');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+
+marked.setOptions({ mangle: false, headerIds: false });
 //Valida sí la ruta existe
 const validatePath = (pathUser) => {
-	if (!fs.existsSync(pathUser)) { // Si la ruta no existe, retorna error
+	if (!fs.existsSync(pathUser)) {
 		throw new Error('La ruta no existe');
+	} else if (path.isAbsolute(pathUser)) {
+		console.log(pathUser); return pathUser
+
 	} else {
-		if (path.isAbsolute(pathUser)) { // Para saber sí ruta es absoluta
-			return pathUser
-		} else {
-			return path.resolve(pathUser)// transforma ruta relativa a absoluta
-		}
+		return path.resolve(pathUser)//ruta relativa a absoluta
 	}
 };
 const isAdirectory = (pathUser) => {
@@ -28,39 +30,58 @@ const fileMd = (pathUser) => {
 	return md === '.md';
 }
 // Valida sí es archivo
-const isAfile = (pathUser) => fs.lstatSync(pathUser).isFile();
+const isAfile = (pathUser) => fs.existsSync(pathUser) && fs.lstatSync(pathUser).isFile();
 const readFiles = (pathUser) => {
 	return new Promise((resolve, reject) => {
-		fs.readFile(pathUser, 'utf-8', (err, data) => {
+		fs.readFile(pathUser, 'utf-8', (err, data) => {    // REUTILIZAR PARA  la  que reciba un array de archivos bucle recorrido a cada ele
+			// console.log('========', data, 42)
 			if (err) {
 				reject(err);
 			} else {
-				resolve(data);
+				const links = obtainLinks(data, pathUser)
+				resolve(links);
 			}
 		});
 	});
 };
-// Función para identificar que tipo de archivo es la ruta
-const typeOfExtension = (pathUser) => path.extname(path.basename(pathUser));
-// Función buscar los enlaces
-// const findLinksInFile = (filePath)=> {
-// 	// const fileContent = fs.readFileSync(filePath, 'utf-8');
-// 	const linkRegex = /\[(.*?)\]\((.*?)\)/g;
-// 	const links = [];
-// 	let match;
-	
-// 	while ((match = linkRegex.exec(filePath)) !== null) {
-// 	  const link = {
-// 		text: match[1],
-// 		url: match[2]
-// 	  };
-// 	  links.push(link);
-// 	}
-	
-// 	return links;
-//   }
-
-//    findLinksInFile('./hijo.md'); 
+const obtainLinks = (res, file) => {
+	// console.log('Entró a la función obtainLinks', res);
+	const arraylinks = [];
+	const contentHTML = marked.parse(res);
+	const dom = new JSDOM(contentHTML);
+	const linksDOM = dom.window.document.querySelectorAll('a');
+	console.log('linksDOM', linksDOM.length);
+	linksDOM.forEach((link) => {
+		const url = link.href;
+		const text = link.textContent;
+		arraylinks.push({ href: url, text, file });
+	});
+	return arraylinks;
+}
+const validateLink = (arrObjLINKS) => {
+	const arrLinks = arrObjLINKS.map((e) => {
+		return axios(e.href)
+			.then((response) => {
+				return {
+					href: e.href,
+					text: e.text,
+					file: e.file,
+					status: response.status,
+					ok: 'ok',
+				}
+			})
+			.catch((err) => {
+				return {
+					href: e.href,
+					text: e.text,
+					file: e.file,
+					status: err.status,
+					ok: 'fail',
+				}
+			});
+	});
+	return Promise.all(arrLinks);
+}
 
 module.exports = {
 	validatePath,
@@ -68,8 +89,7 @@ module.exports = {
 	isAfile,
 	readFiles,
 	readDirectories,
-	typeOfExtension,
 	fileMd,
-	// findLinksInFile
-	// filesInfo
+	obtainLinks,
+	validateLink
 };
