@@ -18,11 +18,7 @@ const validatePath = (pathUser) => {
 	}
 };
 const isAdirectory = (pathUser) => {
-	try {
 		return fs.statSync(pathUser).isDirectory();
-	} catch (error) {
-		return false;
-	}
 };
 const readDirectories = (pathUser) => fs.readdirSync(pathUser);
 const fileMd = (pathUser) => {
@@ -33,7 +29,7 @@ const fileMd = (pathUser) => {
 const isAfile = (pathUser) => fs.existsSync(pathUser) && fs.lstatSync(pathUser).isFile();
 const readFiles = (pathUser) => {
 	return new Promise((resolve, reject) => {
-		fs.readFile(pathUser, 'utf-8', (err, data) => {    // REUTILIZAR PARA  la  que reciba un array de archivos bucle recorrido a cada ele
+		fs.readFile(pathUser, 'utf-8', (err, data) => {    // REUTILIZAR PARA  la  que reciba un array de archivos bucle recorrido a cada elemento
 			// console.log('========', data, 42)
 			if (err) {
 				reject(err);
