@@ -2,7 +2,9 @@ const {
   validatePath, 
   validateLink,
   recursivity,
-  readFiles
+  readFiles,
+  stats,
+  statsBroken
 } = require('./functions.js');
 const mdLinks = (pathUser, options) => { //retorna una promesa
   return new Promise((resolve, reject) => {
@@ -11,25 +13,26 @@ const mdLinks = (pathUser, options) => { //retorna una promesa
     readFiles(resultRecursivity)
     .then((links)=> {
       // console.log(links);
-      if (!options.validate) {
+      if (!options.validate && !options.stats) { //SIN VALIDATE
         resolve(links.flat()) //arrObj
         // return content;
-      } else {
+      } else if (options.validate && !options.stats){ // --VALIDATE
         validateLink(links.flat())
         .then((linksValidated)=>{
           resolve (linksValidated)
         })
      //mandar file ruta donde se encontró
+      }else if(options.validate && options.stats){ //--VALIDATE --STATS
+        validateLink(links.flat())
+        .then((linksValidated)=>{
+          resolve(statsBroken(linksValidated))
+        })
+      }else if(options.stats && options.validate === undefined){
+        resolve(stats(links.flat())) // --STATS
+      }else{
+        console.log('La ruta es inválida')
       }
     })
-    // .then((res) => {
-    //   console.log('RESindex',res);
-    //   resolve(res)   // if y else de opciones del validate...  option
-    // })
-    // .catch((err) => {
-    //   reject(`Ruta inválida ${err}`);
-    // })
-  
   });
 };
 
