@@ -1,55 +1,35 @@
 const { 
   validatePath, 
-  isAdirectory, 
-  isAfile, 
-  readFiles, 
-  readDirectories, 
-  fileMd, 
-  obtainLinks,
-  validateLink
+  validateLink,
+  recursivity,
+  readFiles
 } = require('./functions.js');
-
-const path = require('node:path');
-
-const mdLinks = (pathUser, options) => {
+const mdLinks = (pathUser, options) => { //retorna una promesa
   return new Promise((resolve, reject) => {
     const resultPath = validatePath(pathUser);
-
-    if (isAdirectory(resultPath)) { // sí es un directorio
-      const contentDirectory = readDirectories(resultPath); 
-      const filteredElements = contentDirectory.filter((e) => isAdirectory(path.join(resultPath, e)) || fileMd(e));
-      console.log(filteredElements, 45);
-      const promises = filteredElements.map((e) => mdLinks(path.join(resultPath, e), options)); 
-
-      Promise.all(promises)
-        .then((results) => {
-        const links = results.flat();
-        resolve(links);
-      })
-        .catch((err)=>{
-          reject(`No se pudieron procesar los enlaces: ${err}`);
-        });
-    } else if (isAfile(resultPath)) {
-      const isMarkdown = fileMd(resultPath);//el archivo leido
-      if (isMarkdown) {
-          readFiles(resultPath)
-            .then((content) => {
-              // console.log(content);
-              // const getlinks = obtainLinks(content); //conficiones de opciones y según eso  retornar
-              const linksValid = validateLink(content)
-              if(!options.validate){
-                resolve(content);
-              } else{
-                resolve (linksValid)    //mandar file ruta donde se encontró
-              }
-            })  
-            .catch((err)=>{
-            reject (`No se pudo leer el archivo ${err}`);
-            });
+    const resultRecursivity = recursivity(resultPath)
+    readFiles(resultRecursivity)
+    .then((links)=> {
+      // console.log(links);
+      if (!options.validate) {
+        resolve(links.flat()) //arrObj
+        // return content;
+      } else {
+        validateLink(links.flat())
+        .then((linksValidated)=>{
+          resolve (linksValidated)
+        })
+     //mandar file ruta donde se encontró
       }
-    } else {
-      reject('Ruta invalida');
-    }
+    })
+    // .then((res) => {
+    //   console.log('RESindex',res);
+    //   resolve(res)   // if y else de opciones del validate...  option
+    // })
+    // .catch((err) => {
+    //   reject(`Ruta inválida ${err}`);
+    // })
+  
   });
 };
 
