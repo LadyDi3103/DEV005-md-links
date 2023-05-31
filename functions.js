@@ -24,9 +24,6 @@ const fileMd = (pathUser) => {
 	const md = path.extname(pathUser);
 	return md === '.md';
 }
-// Valida sí es archivo
-// const isAfile = (pathUser) => fs.existsSync(pathUser) && fs.lstatSync(pathUser).isFile();
-
 const recursivity = (resultPath) => {
 	let arrfilesMD = [];
 	if (isAdirectory(resultPath)) { // sí es un directorio true
@@ -34,11 +31,9 @@ const recursivity = (resultPath) => {
 		contentDirectory.forEach((e) => {
 			if (fileMd(resultPath)) {
 				arrfilesMD.push(path.join(resultPath, e));
-
 			} else {
 				arrfilesMD = arrfilesMD.concat(recursivity(path.join(resultPath, e)));
 			}
-
 		});//array de rutas absolutas de los files md Filtrados
 	} else if (fileMd(resultPath)) {
 		arrfilesMD.push(resultPath);
@@ -94,13 +89,6 @@ const validateLink = (arrObjLINKS) => {
 	});
 	return Promise.all(arrLinks);
 }
-// cantidad total de links
-// const totalLinks = (links) => {
-//     const total = links.length;
-//     return total;
-// };
-// cantidad de links únicos
-// cantidad de links rotos (fail)
 const stats = (links) => {
 	return new Promise((resolve, reject) => {
 		const totalLinks = links.length;
