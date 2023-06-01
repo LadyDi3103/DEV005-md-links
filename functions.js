@@ -6,7 +6,6 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
 marked.setOptions({ mangle: false, headerIds: false });
-//Valida sí la ruta existe
 const validatePath = (pathUser) => {
 	if (!fs.existsSync(pathUser)) {
 		throw new Error('La ruta no existe');
@@ -71,7 +70,7 @@ const validateLink = (arrObjLINKS) => {
 			.then((response) => {
 				return {
 					href: e.href,
-					text: e.text,
+					text: e.text.substring(0,50),
 					file: e.file,
 					status: response.status,
 					ok: 'ok',
@@ -80,7 +79,7 @@ const validateLink = (arrObjLINKS) => {
 			.catch((err) => {
 				return {
 					href: e.href,
-					text: e.text,
+					text: e.text.substring(0,50),
 					file: e.file,
 					status: err.status !== undefined ? err.status : 404,
 					ok: 'fail',
@@ -89,49 +88,36 @@ const validateLink = (arrObjLINKS) => {
 	});
 	return Promise.all(arrLinks);
 }
-const stats = (links) => {
-	return new Promise((resolve, reject) => {
-		const totalLinks = links.length;
-		const unique = uniqueLinks(links);
-		const statsResult = {
-			Total: totalLinks,
-			Unique: unique,
-		};
-		resolve(statsResult);
-	});
-}
-const broken = (links) => {
-	const failMessage = links.filter(link => link.ok === 'fail');
-	const uniqueFails = new Set(failMessage);
-	return uniqueFails.size;
+const statsOption = (arrOfMDLinks) => {
+    const totalLinks = arrOfMDLinks.length;
+    const uniqueLinks = new Set(arrOfMDLinks.map((element) => element.href)).size;
+    if (totalLinks === 0) {
+        return 'There is 0 Links in this path! Try another one!';
+    }
+    const statsTemplate = `
+        Final Stats:
+        TOTAL: ${totalLinks}
+        UNIQUE: ${uniqueLinks}
+		`;
+    return statsTemplate;
 };
-const statsBroken = (links) => {
-	return new Promise((resolve, reject) => {
-		const totalLinks = links.length;
-		const unique = uniqueLinks(links);
-		const brokenLinks = broken(links);
-		const statsResult = {
-			Total: totalLinks,
-			Unique: unique,
-			Broken: brokenLinks
-		};
-		resolve(statsResult);
-	});
-}
-const uniqueLinks = (links) => {
-	const hrefs = links.map(link => link.href);
-	const uniqueHrefs = new Set(hrefs);
-	return uniqueHrefs.size;
+const statsValidate = (arrayOfMDLinks) => {
+    const totalLinks = arrayOfMDLinks.length;
+    const uniqueLinks = new Set(arrayOfMDLinks.map((element) => element.href)).size;
+    const brokenLinks = new Set(arrayOfMDLinks.filter((link) => link.ok === 'fail')).size;
+    const statsValidateTemplate = `
+        Final Stats-Validate
+        TOTAL: ${totalLinks}
+        UNIQUE: ${uniqueLinks}
+        BROKEN: ${brokenLinks}
+		`;
+    return statsValidateTemplate;
 };
-
-
 module.exports = {
 	validatePath,
 	readFiles,
 	validateLink,
 	recursivity,
-	stats,
-	broken,
-	statsBroken
-
+	statsOption,
+	statsValidate
 };
