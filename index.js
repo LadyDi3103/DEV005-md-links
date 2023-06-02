@@ -19,20 +19,7 @@ const mdLinks = (pathUser, options) => { //retorna una promesa
             .then((linksValidated) => {
               resolve(linksValidated)
             })
-            
-          //mandar file ruta donde se encontró
         } 
-    
-        // else if (options.validate && options.stats) { //--VALIDATE --STATS
-        //   validateLink(links.flat())
-        //     .then((linksValidated) => {
-        //       resolve(statsBroken(linksValidated))
-        //     })
-        // } else if (options.stats && options.validate === undefined) {   // --STATS
-        //   resolve(stats(links.flat()))
-        // } else {
-        //   console.log('La ruta es inválida')
-        // }
       }
       ).catch((err)=>{
         reject(`La ruta es inválida ${err}`)

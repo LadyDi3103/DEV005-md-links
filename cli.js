@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { argv } = require('node:process');
 const mdLinks = require('./index.js');
 const {
     statsOption,
@@ -45,7 +46,8 @@ Recuerda que la estructura que debes seguir es la siguiente:
 
 ************************************************************************ 
 `;
-const [path, option, option2] = process.argv.slice(2);
+
+const [path, option, option2] = argv.slice(2);
 
 if (path && option === undefined && option2 === undefined) { // SOLO PATH
     mdLinks(path, { validate: false })

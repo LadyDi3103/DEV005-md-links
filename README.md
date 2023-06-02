@@ -1,3 +1,5 @@
+[object Object]
+
 <h1><center> Markdown Links📄🔗 </center></h1>
 
 ---
@@ -38,17 +40,20 @@ mdLinks es una biblioteca creada con JavaScript y Node.js, con la que es posible
 
 ## 3. Cómo instalar mdLinks?
 
-Para hacer uso de la libreria por línea de comando: 
+Para hacer uso de la libreria por línea de comando:
+
 - Escribe en la terminal:
 
-👉 `npm install ladydi3103-mdlinks -g`
+👉 `npm i ldqq-md-links -g`
 
 Para hacer uso de la libreria directamente en el proyecto:
+
 - Escribe en la terminal:
 
-👉 `npm install ladydi3103-mdlinks`
+👉 `npm i ldqq-md-links`
 
 Luego importar con:
+
 ```js
 const { mdLinks } = require("ladydi3103-mdlinks");
 
@@ -83,6 +88,7 @@ mdLinks("./some/dir")
 ## 4. Opciones de uso
 
 ### CLI (Command Line Interface - Interfaz de Línea de Comando)
+
 Para hacer la consulta por la línea de comando, tendrás las siguientes opciones:
 
 ```js
@@ -128,6 +134,7 @@ Recuerda que la estructura que debes seguir es la siguiente:
 `mdLinks <path-to-file> [options]`
 
 Ejemplo:
+
 ```js
 mdLinks ./Prueba/filePrueba.md
 ```
@@ -135,6 +142,7 @@ mdLinks ./Prueba/filePrueba.md
 <img align='center' src="./img/sinValidate.png" width= 800 height= 400>
 
 Ejemplo:
+
 ```js
 mdLinks ./Prueba/filePrueba.md --validate
 ```
@@ -142,6 +150,7 @@ mdLinks ./Prueba/filePrueba.md --validate
 <img align='center' src="./img/conValidate.png" width="800" height= 400>
 
 Ejemplo:
+
 ```js
 mdLinks ./Prueba/filePrueba.md --validate --stats
 ```
@@ -149,6 +158,7 @@ mdLinks ./Prueba/filePrueba.md --validate --stats
 <img align='center' src="./img/statsValidate.png" width="800" height= 150>
 
 Ejemplo:
+
 ```js
 mdLinks ./Prueba/filePrueba.md --stats
 ```
@@ -159,8 +169,7 @@ mdLinks ./Prueba/filePrueba.md --stats
 
 ## 5. Plan de acción para el desarrollo
 
-- En este proyecto nos recomendaron usar la herramienta de planificación y organización de GitHub llamada **Github Projects** para que mediante **issues** y **milestones** podamor organizar y planificar tareas y objetivos concretos. 
-
+- En este proyecto nos recomendaron usar la herramienta de planificación y organización de GitHub llamada **Github Projects** para que mediante **issues** y **milestones** podamor organizar y planificar tareas y objetivos concretos.
 - Se realizaron dos diagramas de Flujo para el API y CLI y asi poder visualizar y planificar las tareas y objetivos para estructurar lo que se tiene que hacer y cumplir los objetivos.
 
 ### Diagramas de Flujo
